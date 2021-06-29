@@ -194,7 +194,7 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 		print("\t(no compression achieved)")
 		return nil
 	}
-	print("\t"+strSize(minresult.size), " ("+ftoa(100.0*(float64(srcfilesize)/float64(minresult.size)))+"%) via '"+strings.Join(minnames, "', '")+"'")
+	print("\t"+strSize(minresult.size), " ("+ftoa(100.0/(float64(srcfilesize)/float64(minresult.size)))+"%) via '"+strings.Join(minnames, "', '")+"'")
 
 	commonprefix, maxlen := "", 0
 	for _, name := range minnames {
