@@ -50,7 +50,7 @@ func main() {
 			if toolname == "" {
 				toolname = "(no-op)"
 			}
-			println("\t"+toolname+"\t\twon", strconv.FormatFloat(percfiles, 'f', 1, 64)+"% of files,", strconv.FormatFloat(percsavings, 'f', 1, 64)+"% of size-savings")
+			println("\t"+toolname+"\t\twon", ftoa(percfiles)+"% of files,", ftoa(percsavings)+"% of size-savings")
 		}
 	}()
 
@@ -188,7 +188,7 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 		}
 	}
 
-	print("\t"+strSize(minresult.size), " via '"+strings.Join(minnames, "', '")+"'")
+	print("\t"+strSize(minresult.size), " ("+ftoa(100.0*(float64(srcfilesize)/float64(minresult.size)))+"%) via '"+strings.Join(minnames, "', '")+"'")
 	if minnames[0] == "" {
 		i2 := stats.tools[""]
 		stats.tools[""] = [2]int{i2[0] + 1, 0}

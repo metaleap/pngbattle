@@ -14,15 +14,19 @@ var (
 	tmpFileNamePrefix = strconv.FormatInt(time.Now().UnixNano(), 36)
 )
 
+func ftoa(f float64) string {
+	return strconv.FormatFloat(f, 'f', 1, 64)
+}
+
 func strSize(size int) string {
 	return strSize64(int64(size))
 }
 
 func strSize64(size int64) string {
 	if mb := int64(1024 * 1024); size >= mb {
-		return strconv.FormatFloat(float64(size)*(1.0/float64(mb)), 'f', 1, 64) + "MB"
+		return ftoa(float64(size)*(1.0/float64(mb))) + "MB"
 	} else if kb := int64(1024); size >= kb {
-		return strconv.FormatFloat(float64(size)*(1.0/float64(kb)), 'f', 1, 64) + "KB"
+		return ftoa(float64(size)*(1.0/float64(kb))) + "KB"
 	}
 	return fmt.Sprintf("%vB", size)
 }
