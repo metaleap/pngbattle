@@ -15,11 +15,11 @@ import (
 
 var (
 	withGo          = true
+	withAdvancecomp = true
 	withImagemagick = true
 	withOptipng     = true
 	withOxipng      = true
 	withZopflipng   = true
-	withAdvancecomp = true
 
 	timeStarted = time.Now()
 	tmpFiles    = map[string]struct{}{}
