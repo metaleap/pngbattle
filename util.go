@@ -84,3 +84,14 @@ func tmpFilePath() (filePath string) {
 	tmpFiles[filePath] = struct{}{}
 	return
 }
+
+func writeFile(fileName string, data []byte) (err error) {
+	tmpfilename := fileName + ".pb" + strconv.FormatInt(time.Now().UnixNano(), 36)
+	if err = os.WriteFile(tmpfilename, data, os.ModePerm); err == nil {
+		err = os.Rename(tmpfilename, fileName)
+	}
+	if err != nil {
+		_ = os.Remove(tmpfilename)
+	}
+	return
+}

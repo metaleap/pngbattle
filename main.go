@@ -37,7 +37,7 @@ func main() {
 		panic("No tools: all disabled")
 	}
 	defer func() {
-		println("\nSTATS:", strSize64(stats.totalSizeSrc), "down to", strSize64(stats.totalSizeDst), "in", time.Now().Sub(timeStarted).String())
+		println("\nSTATS:", strSize64(stats.totalSizeSrc), "down to", strSize64(stats.totalSizeDst), "("+ftoa(100.0/(float64(stats.totalSizeSrc)/float64(stats.totalSizeDst)))+"%)", "in", time.Now().Sub(timeStarted).String())
 		for tmpfilepath := range tmpFiles {
 			_ = os.Remove(tmpfilepath)
 		}
@@ -62,7 +62,7 @@ func main() {
 			stats.totalSizeSrc += fileinfo.Size()
 		}
 	}
-	srcdonesize := int64(0)
+	srcdonesize, numremaining := int64(0), len(os.Args)-1
 	for _, pngfilepath := range os.Args[1:] {
 		pngdata, err := os.ReadFile(pngfilepath)
 		if err != nil {
@@ -72,18 +72,18 @@ func main() {
 		srcsize := int64(len(pngdata))
 		pngdata = pngMin(pngfilepath, pngdata)
 		{
-			srcdonesize += srcsize
+			srcdonesize, numremaining = srcdonesize+srcsize, numremaining-1
 			sizeremaining := stats.totalSizeSrc - srcdonesize
 			timetaken := time.Now().Sub(timeStarted)
 			timeremaining := (float64(timetaken) / float64(srcdonesize)) * float64(sizeremaining)
-			println("\tapprox. " + time.Duration(timeremaining).String() + " remaining...")
+			println("\tremaining: " + itoa(numremaining) + "/" + itoa(len(os.Args)-1) + " file(s), " + strSize64(sizeremaining) + "/" + strSize64(stats.totalSizeSrc) + ", ~" + time.Duration(timeremaining).String() + "...")
 		}
 		if len(pngdata) == 0 {
 			stats.totalSizeDst += srcsize
 		} else {
 			stats.totalSizeDst += int64(len(pngdata))
 			dstfilepath := pngfilepath + "." + strconv.FormatInt(time.Now().UnixNano(), 36) + ".png"
-			if err = os.WriteFile(dstfilepath, pngdata, os.ModePerm); err != nil {
+			if err = writeFile(dstfilepath, pngdata); err != nil {
 				_ = os.Remove(dstfilepath)
 				println("OS WriteFile", err)
 				// } else if true {
@@ -215,7 +215,7 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 		}
 	}
 	if commonprefix = strings.TrimSpace(commonprefix); commonprefix == "" {
-		println("\nNo common prefix: '" + strings.Join(minnames, "', '") + "'")
+		print("\nNo common prefix: '" + strings.Join(minnames, "', '") + "'")
 	} else {
 		i2 := stats.tools[commonprefix]
 		stats.tools[commonprefix] = [2]int{i2[0] + 1, i2[1] + (srcfilesize - minresult.size)}
