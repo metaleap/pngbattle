@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	withGo          = true
+	withGoStdLib    = true
 	withAdvancecomp = true
 	withImagemagick = true
 	withOptipng     = true
@@ -37,24 +37,28 @@ func main() {
 		panic("No tools: all disabled")
 	}
 	defer func() {
-		println("\nSTATS:", strSize64(stats.totalSizeSrc), "down to", strSize64(stats.totalSizeDst), "("+ftoa(100.0/(float64(stats.totalSizeSrc)/float64(stats.totalSizeDst)))+"%)", "in", time.Now().Sub(timeStarted).String())
 		for tmpfilepath := range tmpFiles {
 			_ = os.Remove(tmpfilepath)
 		}
-		totalsavings := stats.totalSizeSrc - stats.totalSizeDst
-		for toolname, i2 := range stats.tools {
-			percsavings, percfiles := 0.0, 100.0/(float64(len(os.Args)-1)/float64(i2[0]))
-			if savings := i2[1]; savings != 0 {
-				percsavings = 100.0 / (float64(totalsavings) / float64(savings))
+		if len(os.Args) > 2 {
+			println("PNGBATTLE STATS:", strSize64(stats.totalSizeSrc), "down to", strSize64(stats.totalSizeDst), "("+ftoa(100.0/(float64(stats.totalSizeSrc)/float64(stats.totalSizeDst)))+"%)", "in", time.Now().Sub(timeStarted).String())
+			totalsavings := stats.totalSizeSrc - stats.totalSizeDst
+			for toolname, i2 := range stats.tools {
+				percsavings, percfiles := 0.0, 100.0/(float64(len(os.Args)-1)/float64(i2[0]))
+				if savings := i2[1]; savings != 0 {
+					percsavings = 100.0 / (float64(totalsavings) / float64(savings))
+				}
+				if toolname == "" {
+					toolname = "(no-op)"
+				}
+				println("\t"+toolname+"\t\twon", ftoa(percfiles)+"% of files,", ftoa(percsavings)+"% of size-savings")
 			}
-			if toolname == "" {
-				toolname = "(no-op)"
-			}
-			println("\t"+toolname+"\t\twon", ftoa(percfiles)+"% of files,", ftoa(percsavings)+"% of size-savings")
 		}
 	}()
 
-	println("Started:", len(os.Args)-1, "×", len(tools), "=", (len(os.Args)-1)*len(tools), "attempts...")
+	if len(os.Args) > 2 {
+		println("\n_________\nPNGBATTLE started:", len(os.Args)-1, "×", len(tools), "=", (len(os.Args)-1)*len(tools), "attempts...")
+	}
 	for _, pngfilepath := range os.Args[1:] {
 		if fileinfo, err := os.Stat(pngfilepath); err != nil {
 			panic(err)
@@ -71,12 +75,13 @@ func main() {
 		}
 		srcsize := int64(len(pngdata))
 		pngdata = pngMin(pngfilepath, pngdata)
-		{
-			srcdonesize, numremaining = srcdonesize+srcsize, numremaining-1
+		if srcdonesize, numremaining = srcdonesize+srcsize, numremaining-1; numremaining == 0 {
+			println()
+		} else {
 			sizeremaining := stats.totalSizeSrc - srcdonesize
 			timetaken := time.Now().Sub(timeStarted)
 			timeremaining := (float64(timetaken) / float64(srcdonesize)) * float64(sizeremaining)
-			println("\tremaining: " + itoa(numremaining) + "/" + itoa(len(os.Args)-1) + " file(s), " + strSize64(sizeremaining) + "/" + strSize64(stats.totalSizeSrc) + ", ~" + time.Duration(timeremaining).String() + "...")
+			println("\t\tremaining: " + itoa(numremaining) + "/" + itoa(len(os.Args)-1) + " file(s), " + strSize64(sizeremaining) + "/" + strSize64(stats.totalSizeSrc) + ", ~" + time.Duration(timeremaining).String() + "...")
 		}
 		if len(pngdata) == 0 {
 			stats.totalSizeDst += srcsize
@@ -194,7 +199,7 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 		print("\t(no compression achieved)")
 		return nil
 	}
-	print("\t"+strSize(minresult.size), " ("+ftoa(100.0/(float64(srcfilesize)/float64(minresult.size)))+"%) via '"+strings.Join(minnames, "', '")+"'")
+	print("\t"+strSize(minresult.size), " ("+ftoa(100.0/(float64(srcfilesize)/float64(minresult.size)))+"%) via '"+strings.Join(minnames, "', '")+"'.")
 
 	commonprefix, maxlen := "", 0
 	for _, name := range minnames {
@@ -214,7 +219,7 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 			break
 		}
 	}
-	if commonprefix = strings.TrimSpace(commonprefix); commonprefix == "" {
+	if commonprefix = strings.TrimSpace(commonprefix); commonprefix == "" && len(os.Args) > 2 {
 		print("\nNo common prefix: '" + strings.Join(minnames, "', '") + "'")
 	} else {
 		i2 := stats.tools[commonprefix]

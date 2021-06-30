@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	if !withGo {
+	if !withGoStdLib {
 		return
 	}
 	for level := png.CompressionLevel(-1); level <= 9; level++ {
