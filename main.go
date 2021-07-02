@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	withGoStdLib    = true
-	withAdvancecomp = true
-	withImagemagick = true
-	withOptipng     = true
-	withOxipng      = true
+	withGoStdLib    = false
+	withAdvancecomp = false
+	withImagemagick = false
+	withOptipng     = false
+	withOxipng      = false
 	withZopflipng   = true
 
 	timeStarted = time.Now()
