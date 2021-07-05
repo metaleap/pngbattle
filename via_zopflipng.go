@@ -9,12 +9,16 @@ func init() {
 		return
 	}
 	tools["zop"] = func(srcfilepath string, srcfiledata []byte, srcfileimg image.Image, printmsg func(...interface{})) []byte {
-		return viaZopfli(srcfilepath, printmsg)
+		return viaZopfli(srcfilepath, len(srcfiledata), printmsg)
 	}
 }
 
-func viaZopfli(srcFilePath string, printMsg func(...interface{})) []byte {
-	return viaCmd(printMsg, nil, "zopflipng", "-m", "--lossy_transparent", "--filters=01234mepb",
+func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})) []byte {
+	iter := "8"
+	if srcFileLen < (2 * 1024 * 1024) {
+		iter = "444"
+	}
+	return viaCmd(printMsg, nil, "zopflipng", "-m", "--lossy_transparent", "--lossy_8bit", "--filters=01234mepb", "--iterations="+iter,
 		srcFilePath,
 		"$dstfilepath$")
 }

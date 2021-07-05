@@ -107,7 +107,7 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 		pngData []byte
 	}
 	srcfilesize := len(srcFileData)
-	println("\033[4m" + srcFilePath + "\033[0m\t" + strSize(srcfilesize))
+	println(time.Now().Format("15:04:05") + "\t\033[4m" + srcFilePath + "\033[0m\t\t" + strSize(srcfilesize))
 	results := make(map[string]result, len(tools))
 
 	srcfileimg, err := png.Decode(bytes.NewReader(srcFileData))
@@ -199,7 +199,7 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 		print("\t(no compression achieved)")
 		return nil
 	}
-	print("\t"+strSize(minresult.size), " ("+ftoa(100.0/(float64(srcfilesize)/float64(minresult.size)))+"%) via '"+strings.Join(minnames, "', '")+"'.")
+	print("\t\t"+strSize(minresult.size), " ("+ftoa(100.0/(float64(srcfilesize)/float64(minresult.size)))+"%) via '"+strings.Join(minnames, "', '")+"'.")
 
 	commonprefix, maxlen := "", 0
 	for _, name := range minnames {
