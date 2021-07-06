@@ -14,7 +14,7 @@ func init() {
 }
 
 func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})) []byte {
-	iter := "5"
+	iter := "4"
 	if srcFileLen < (5 * 1024 * 1024) {
 		iter = "444"
 	}
