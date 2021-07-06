@@ -196,7 +196,7 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 	if minnames[0] == "" {
 		i2 := stats.tools[""]
 		stats.tools[""] = [2]int{i2[0] + 1, 0}
-		print("\t(no compression achieved)")
+		print(time.Now().Format("15:04:05") + "\t(no compression achieved)")
 		return nil
 	}
 	print(time.Now().Format("15:04:05")+"\t"+strSize(minresult.size), " ("+ftoa(100.0/(float64(srcfilesize)/float64(minresult.size)))+"%) via '"+strings.Join(minnames, "', '")+"'.")
