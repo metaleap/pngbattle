@@ -144,14 +144,16 @@ func pngMin(srcFilePath string, srcFileData []byte) []byte {
 					if ms := atomic.LoadUint32(&minsize); uint32(res.size) >= ms {
 						res.pngData = nil
 					} else {
-						for x := 0; x < dstimg.Bounds().Max.X && allok; x++ {
-							for y := 0; y < dstimg.Bounds().Max.Y && allok; y++ {
-								dr, dg, db, da := dstimg.At(x, y).RGBA()
-								sr, sg, sb, sa := srcfileimg.At(x, y).RGBA()
-								if allok = (dr == sr) && (dg == sg) && (db == sb) && (da == sa); !allok {
-									mu.Lock()
-									println("\tBUGBY '"+toolname+"' for", srcFilePath, ": rgba diff at", x, y)
-									mu.Unlock()
+						if os.Getenv("NO_RGBA_CHECK") == "" {
+							for x := 0; x < dstimg.Bounds().Max.X && allok; x++ {
+								for y := 0; y < dstimg.Bounds().Max.Y && allok; y++ {
+									dr, dg, db, da := dstimg.At(x, y).RGBA()
+									sr, sg, sb, sa := srcfileimg.At(x, y).RGBA()
+									if allok = (dr == sr) && (dg == sg) && (db == sb) && (da == sa); !allok {
+										mu.Lock()
+										println(fmt.Sprintf("\tBUGBY '%s' for %s: rgba diff at %d,%d (src:%d,%d,%d,%d dst:%d,%d,%d,%d)", toolname, srcFilePath, x, y, sr, sg, sb, sa, dr, dg, db, da))
+										mu.Unlock()
+									}
 								}
 							}
 						}
