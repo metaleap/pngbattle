@@ -21,8 +21,11 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 	if srcFileLen > (128 * 1024) {
 		iter = "77"
 	}
-	if srcFileLen > (544 * 1024) {
+	if srcFileLen > (512 * 1024) {
 		iter = "22"
+	}
+	if srcFileLen > (1 * 1024 * 1024) {
+		iter = "11"
 	}
 	if srcFileLen > (2 * 1024 * 1024) {
 		iter = "5"
