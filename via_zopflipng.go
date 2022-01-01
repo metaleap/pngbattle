@@ -30,14 +30,20 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 	if srcFileLen > (384 * 1024) {
 		iter = "33"
 	}
-	if srcFileLen > (512 * 1024) {
-		iter = "22"
-	}
-	if srcFileLen > (1 * 1024 * 1024) {
+	if srcFileLen > (528 * 1024) {
 		iter = "11"
 	}
-	if srcFileLen > (2 * 1024 * 1024) {
-		iter = "5"
+	if srcFileLen > (656 * 1024) {
+		iter = "7"
+	}
+	if srcFileLen > (792 * 1024) {
+		iter = "4"
+	}
+	if srcFileLen > (896 * 1024) {
+		iter = "2"
+	}
+	if srcFileLen > (1024 * 1024) {
+		iter = "1"
 	}
 	return viaCmd(printMsg, nil, "zopflipng", "-m", "--lossy_transparent", "--lossy_8bit", "--filters=01234mepb", "--iterations="+iter,
 		srcFilePath,
