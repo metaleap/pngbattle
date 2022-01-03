@@ -31,7 +31,7 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 		iter = "22"
 	}
 	if srcFileLen > (528 * 1024) {
-		iter, nofilt = "11", true
+		iter = "11"
 	}
 	if srcFileLen > (656 * 1024) {
 		iter = "7"
@@ -40,7 +40,7 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 		iter = "4"
 	}
 	if srcFileLen > (896 * 1024) {
-		iter = "2"
+		iter, nofilt = "2", true
 	}
 	if srcFileLen > (1016 * 1024) {
 		iter = "1"
@@ -49,7 +49,7 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 		srcFilePath,
 		"$dstfilepath$"}
 	if nofilt {
-		cmdandargs = append([]string{"zopflipng"}, cmdandargs[2:]...)
+		cmdandargs = append([]string{cmdandargs[0]}, cmdandargs[2:]...)
 	}
 	return viaCmd(printMsg, nil, cmdandargs...)
 }
