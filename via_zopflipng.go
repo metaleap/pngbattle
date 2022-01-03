@@ -2,6 +2,7 @@ package main
 
 import (
 	"image"
+	"os"
 )
 
 func init() {
@@ -48,7 +49,7 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 	cmdandargs := []string{"zopflipng", "--filters=01234mepb", "--lossy_transparent", "--lossy_8bit", "--iterations=" + iter,
 		srcFilePath,
 		"$dstfilepath$"}
-	if nofilt {
+	if nofilt || os.Getenv("NOFILT") != "" {
 		cmdandargs = append([]string{cmdandargs[0]}, cmdandargs[2:]...)
 	}
 	return viaCmd(printMsg, nil, cmdandargs...)
