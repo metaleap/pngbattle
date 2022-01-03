@@ -14,7 +14,7 @@ func init() {
 }
 
 func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})) []byte {
-	iter := "222"
+	iter, nofilt := "222", false
 	if srcFileLen > (32 * 1024) {
 		iter = "111"
 	}
@@ -31,7 +31,7 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 		iter = "22"
 	}
 	if srcFileLen > (528 * 1024) {
-		iter = "11"
+		iter, nofilt = "11", true
 	}
 	if srcFileLen > (656 * 1024) {
 		iter = "7"
@@ -42,14 +42,13 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 	if srcFileLen > (896 * 1024) {
 		iter = "2"
 	}
-	slowbiggie := (srcFileLen > (1016 * 1024))
-	if slowbiggie {
+	if srcFileLen > (1016 * 1024) {
 		iter = "1"
 	}
 	cmdandargs := []string{"zopflipng", "--filters=01234mepb", "--lossy_transparent", "--lossy_8bit", "--iterations=" + iter,
 		srcFilePath,
 		"$dstfilepath$"}
-	if slowbiggie {
+	if nofilt {
 		cmdandargs = append([]string{"zopflipng"}, cmdandargs[2:]...)
 	}
 	return viaCmd(printMsg, nil, cmdandargs...)
