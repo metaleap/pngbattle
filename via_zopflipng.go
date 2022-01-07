@@ -43,7 +43,7 @@ func viaZopfli(srcFilePath string, srcFileLen int, printMsg func(...interface{})
 	if srcFileLen > (896 * 1024) {
 		iter = "2"
 	}
-	if srcFileLen > (1016 * 1024) {
+	if srcFileLen > (1016*1024) || os.Getenv("ZOPFAST") != "" || os.Getenv("FASTZOP") != "" {
 		iter, nofilt = "1", true
 	}
 	cmdandargs := []string{"zopflipng", "--filters=01234mepb", "--lossy_transparent", "--lossy_8bit", "--iterations=" + iter,
