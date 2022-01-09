@@ -14,11 +14,12 @@ import (
 )
 
 var (
-	withGoStdLib    = false
-	withAdvancecomp = false
-	withImagemagick = false
-	withOptipng     = false
-	withOxipng      = false
+	useAll          = (os.Getenv("ALL") != "") || (os.Getenv("USEALL") != "") || (os.Getenv("USE_ALL") != "")
+	withGoStdLib    = useAll
+	withAdvancecomp = useAll
+	withImagemagick = useAll
+	withOptipng     = useAll
+	withOxipng      = useAll
 	withZopflipng   = true
 
 	timeStarted = time.Now()
